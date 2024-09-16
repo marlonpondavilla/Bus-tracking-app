@@ -69,10 +69,32 @@
         android:layout_height="wrap_content"
         android:text="Sensor" />
 
-    <Button
-        android:id="@+id/check_add_btn"
+    <TextView
+        android:id="@+id/tv_labelCrumbs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Check location address" />
+        android:text="WayPoint" />
+
+    <TextView
+        android:id="@+id/tv_countOfCrumbs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="0" />
+
+    <Button
+        android:id="@+id/btn_newWayPoint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/black"
+        android:gravity="center"
+        android:text="New WayPoint" />
+
+    <Button
+        android:id="@+id/btn_showWayPoint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/black"
+        android:gravity="center"
+        android:text="Show waypoint lists" />
 
 </LinearLayout>
