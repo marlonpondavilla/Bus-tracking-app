@@ -52,8 +52,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        BitmapDescriptor defaultIcon = BitmapDescriptorFactory.defaultMarker();
 
 
-        LatLng sydney = new LatLng(-34, 151);
-        LatLng lastLocationPlaced = sydney;
+        LatLng bulakan = new LatLng(-34, 151);
+        LatLng lastLocationPlaced = bulakan;
 
         if (savedLocations != null && !savedLocations.isEmpty()) {
             for (Location location : savedLocations) {
