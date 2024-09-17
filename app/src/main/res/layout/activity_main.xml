@@ -97,4 +97,12 @@
         android:gravity="center"
         android:text="Show waypoint lists" />
 
+    <Button
+        android:id="@+id/btn_showMap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/black"
+        android:gravity="center"
+        android:text="Show Map" />
+
 </LinearLayout>

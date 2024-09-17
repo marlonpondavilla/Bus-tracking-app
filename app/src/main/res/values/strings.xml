@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">IT 304 BUS RESERVATION AND TRACKING</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>

@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -39,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView lati, longi, alt, accuracy, speed, address, wayPointCounts;
     Switch swUpdates, swGPS;
-    Button newWayPointBtn, showWayPointBtn;
+    Button newWayPointBtn, showWayPointBtn, showMapBtn;
 
     // Current location
     Location currentLocation;
@@ -74,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
         newWayPointBtn = findViewById(R.id.btn_newWayPoint);
         showWayPointBtn = findViewById(R.id.btn_showWayPoint);
+        showMapBtn = findViewById(R.id.btn_showMap);
 
         // Configure LocationRequest
         locationRequest = new LocationRequest();
@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+
 
         swGPS.setOnClickListener(view -> {
             if (swGPS.isChecked()) {
@@ -116,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         newWayPointBtn.setOnClickListener(view -> {
             // Save the current location as a waypoint
             if (currentLocation != null) {
-                MyApplication myApplication = (MyApplication) getApplicationContext();
+                MyApplication myApplication = MyApplication.getInstance();
                 savedLocations = myApplication.getMyLocations();
                 savedLocations.add(currentLocation);
                 wayPointCounts.setText(Integer.toString(savedLocations.size()));
@@ -126,7 +127,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         showWayPointBtn.setOnClickListener(view -> {
-            // Display waypoints
+            Intent i = new Intent(MainActivity.this, ShowSavedLocationList.class);
+            startActivity(i);
+
+        });
+
+        showMapBtn.setOnClickListener(view -> {
+            Intent i = new Intent(MainActivity.this, MapsActivity.class);
+            startActivity(i);
         });
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -156,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
             new AlertDialog.Builder(this)
                     .setTitle("Permission Needed")
-                    .setMessage("This app requires location permission to function correctly.")
+                    .setMessage("This app requires location permission to function properly.")
                     .setPositiveButton("OK", (dialog, which) -> ActivityCompat.requestPermissions(MainActivity.this,
                             new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                             PERMISSION_FINE_LOCATION))
@@ -244,7 +252,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Cannot provide the street address", Toast.LENGTH_SHORT).show();
         }
 
-        MyApplication myApplication = (MyApplication) getApplicationContext();
+        //get Instance pare wag new Instance to save the actual data in getter!!
+        MyApplication myApplication = MyApplication.getInstance();
         savedLocations = myApplication.getMyLocations();
         wayPointCounts.setText(Integer.toString(savedLocations.size()));
     }
