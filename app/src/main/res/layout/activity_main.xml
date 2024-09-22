@@ -8,51 +8,10 @@
     android:padding="20dp"
     tools:context=".MainActivity">
 
-
-    <TextView
-        android:id="@+id/lat_coordinate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:gravity="center"
-        android:text="lati" />
-
-    <TextView
-        android:id="@+id/long_coordinate"
-        android:padding="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="longi" />
-
-    <TextView
-        android:id="@+id/alt_coordinate"
-        android:padding="10dp"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:layout_height="wrap_content"
-        android:text="alt" />
-
-    <TextView
-        android:id="@+id/accur_coordinate"
-        android:padding="10dp"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:layout_height="wrap_content"
-        android:text="accuracy" />
-
-    <TextView
-        android:id="@+id/spd_coordinate"
-        android:padding="10dp"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:layout_height="wrap_content"
-        android:text="speed" />
-
     <TextView
         android:id="@+id/address"
         android:layout_width="match_parent"
-        android:padding="10dp"
+        android:padding="40dp"
         android:gravity="center"
         android:layout_height="wrap_content"
         android:text="address" />
@@ -82,24 +41,8 @@
         android:text="0" />
 
     <Button
-        android:id="@+id/btn_newWayPoint"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/black"
-        android:gravity="center"
-        android:text="New WayPoint" />
-
-    <Button
-        android:id="@+id/btn_showWayPoint"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/black"
-        android:gravity="center"
-        android:text="Show waypoint lists" />
-
-    <Button
         android:id="@+id/btn_showMap"
-        android:layout_width="match_parent"
+        android:layout_width="376dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/black"
         android:gravity="center"

@@ -43,9 +43,9 @@ public class MainActivity extends AppCompatActivity {
     // Firebase
     private DatabaseReference databaseReference;
 
-    TextView lati, longi, alt, accuracy, speed, address, wayPointCounts;
+    TextView address, wayPointCounts;
     Switch swUpdates, swGPS;
-    Button showWayPointBtn, showMapBtn;
+    Button showMapBtn;
 
     // Current location
     Location currentLocation;
@@ -70,18 +70,12 @@ public class MainActivity extends AppCompatActivity {
         // Firebase
         databaseReference = FirebaseDatabase.getInstance().getReference("locations");
 
-        lati = findViewById(R.id.lat_coordinate);
-        longi = findViewById(R.id.long_coordinate);
-        alt = findViewById(R.id.alt_coordinate);
-        accuracy = findViewById(R.id.accur_coordinate);
-        speed = findViewById(R.id.spd_coordinate);
-        address = findViewById(R.id.address);
         wayPointCounts = findViewById(R.id.tv_countOfCrumbs);
+        address = findViewById(R.id.address);
 
         swUpdates = findViewById(R.id.sw_updates);
         swGPS = findViewById(R.id.sw_gps);
 
-        showWayPointBtn = findViewById(R.id.btn_showWayPoint);
         showMapBtn = findViewById(R.id.btn_showMap);
 
         // Configure LocationRequest
@@ -102,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        //make this button aware user just toggle once do not let on always, consumes battery
         swGPS.setOnClickListener(view -> {
             if (swGPS.isChecked()) {
                 locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -120,11 +115,6 @@ public class MainActivity extends AppCompatActivity {
                 // Stop tracking
                 stopLocationUpdates();
             }
-        });
-
-        showWayPointBtn.setOnClickListener(view -> {
-            Intent i = new Intent(MainActivity.this, ShowSavedLocationList.class);
-            startActivity(i);
         });
 
         showMapBtn.setOnClickListener(view -> {
@@ -234,11 +224,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void stopLocationUpdates() {
         swUpdates.setText("Location is NOT being tracked");
-        lati.setText("Not tracking location");
-        longi.setText("Not tracking location");
-        accuracy.setText("Not tracking location");
-        speed.setText("Not tracking location");
-        alt.setText("Not tracking location");
         address.setText("Not tracking location");
 
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
@@ -285,13 +270,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void updateUIValues(Location location) {
-        lati.setText(String.valueOf(location.getLatitude()));
-        longi.setText(String.valueOf(location.getLongitude()));
-        accuracy.setText(String.valueOf(location.getAccuracy()));
-
-        alt.setText(location.hasAltitude() ? String.valueOf(location.getAltitude()) : "Not available");
-        speed.setText(location.hasSpeed() ? String.valueOf(location.getSpeed()) : "Not available");
-
         Geocoder geocoder = new Geocoder(MainActivity.this);
 
         try {
