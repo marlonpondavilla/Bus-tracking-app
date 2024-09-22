@@ -47,5 +47,6 @@
         android:backgroundTint="@color/black"
         android:gravity="center"
         android:text="Show Map" />
+<!--    remove this comment-->
 
 </LinearLayout>
