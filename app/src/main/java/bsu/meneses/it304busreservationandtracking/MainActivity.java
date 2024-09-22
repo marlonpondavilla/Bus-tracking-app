@@ -28,6 +28,9 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
@@ -35,10 +38,14 @@ public class MainActivity extends AppCompatActivity {
     public static final int DEFAULT_UPDATE_INTERVAL = 30;
     public static final int FAST_UPDATE_INTERVAL = 50;
     private static final int PERMISSION_FINE_LOCATION = 99;
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+
+    // Firebase
+    private DatabaseReference databaseReference;
 
     TextView lati, longi, alt, accuracy, speed, address, wayPointCounts;
     Switch swUpdates, swGPS;
-    Button newWayPointBtn, showWayPointBtn, showMapBtn;
+    Button showWayPointBtn, showMapBtn;
 
     // Current location
     Location currentLocation;
@@ -60,6 +67,9 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
+        // Firebase
+        databaseReference = FirebaseDatabase.getInstance().getReference("locations");
+
         lati = findViewById(R.id.lat_coordinate);
         longi = findViewById(R.id.long_coordinate);
         alt = findViewById(R.id.alt_coordinate);
@@ -71,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         swUpdates = findViewById(R.id.sw_updates);
         swGPS = findViewById(R.id.sw_gps);
 
-        newWayPointBtn = findViewById(R.id.btn_newWayPoint);
         showWayPointBtn = findViewById(R.id.btn_showWayPoint);
         showMapBtn = findViewById(R.id.btn_showMap);
 
@@ -93,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-
         swGPS.setOnClickListener(view -> {
             if (swGPS.isChecked()) {
                 locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -114,7 +122,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        newWayPointBtn.setOnClickListener(view -> {
+        showWayPointBtn.setOnClickListener(view -> {
+            Intent i = new Intent(MainActivity.this, ShowSavedLocationList.class);
+            startActivity(i);
+        });
+
+        showMapBtn.setOnClickListener(view -> {
             // Save the current location as a waypoint
             if (currentLocation != null) {
                 MyApplication myApplication = MyApplication.getInstance();
@@ -124,21 +137,53 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(MainActivity.this, "Current location is not available.", Toast.LENGTH_SHORT).show();
             }
-        });
 
-        showWayPointBtn.setOnClickListener(view -> {
-            Intent i = new Intent(MainActivity.this, ShowSavedLocationList.class);
-            startActivity(i);
-
-        });
-
-        showMapBtn.setOnClickListener(view -> {
             Intent i = new Intent(MainActivity.this, MapsActivity.class);
             startActivity(i);
         });
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         checkPermissionsAndUpdateGPS();
+
+        // Check if the RECORD_AUDIO permission is already granted
+        if (!hasMicrophonePermission()) {
+            promptMicrophonePermission();
+        }
+
+        // Check if location services are enabled
+        if (!isLocationServiceEnabled()) {
+            promptUserToEnableLocation();
+        }
+    }
+
+    private boolean isLocationServiceEnabled() {
+        int locationMode = 0;
+        try {
+            locationMode = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+        return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+    }
+
+    private void promptUserToEnableLocation() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Location services are disabled. Do you want to enable them?")
+                .setPositiveButton("Yes", (dialog, id) -> {
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(intent);
+                })
+                .setNegativeButton("No", (dialog, id) -> dialog.dismiss())
+                .create()
+                .show();
+    }
+
+    private boolean hasMicrophonePermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void promptMicrophonePermission() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO_PERMISSION);
     }
 
     private void checkPermissionsAndUpdateGPS() {
@@ -211,6 +256,13 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "This app requires permission to work properly", Toast.LENGTH_SHORT).show();
                 finish();
             }
+        } else if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, proceed with recording audio
+            } else {
+                // Permission denied, handle accordingly
+                Toast.makeText(this, "RECORD_AUDIO permission is required for this feature.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -220,7 +272,8 @@ public class MainActivity extends AppCompatActivity {
                     .addOnSuccessListener(location -> {
                         if (location != null) {
                             updateUIValues(location);
-                            currentLocation = location;
+                            currentLocation = location; // Store the last known location
+                            saveLocation(currentLocation); // Save using CustomLocation
                         } else {
                             Toast.makeText(MainActivity.this, "Unable to get location.", Toast.LENGTH_SHORT).show();
                         }
@@ -229,6 +282,7 @@ public class MainActivity extends AppCompatActivity {
             requestLocationPermission();
         }
     }
+
 
     private void updateUIValues(Location location) {
         lati.setText(String.valueOf(location.getLatitude()));
@@ -244,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
             List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
             if (addresses != null && !addresses.isEmpty()) {
                 address.setText(addresses.get(0).getAddressLine(0));
+                retrieveLocations();
             } else {
                 address.setText("Address not available");
             }
@@ -252,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Cannot provide the street address", Toast.LENGTH_SHORT).show();
         }
 
-        //get Instance pare wag new Instance to save the actual data in getter!!
+        // Get instance to save the actual data
         MyApplication myApplication = MyApplication.getInstance();
         savedLocations = myApplication.getMyLocations();
         wayPointCounts.setText(Integer.toString(savedLocations.size()));
@@ -271,4 +326,40 @@ public class MainActivity extends AppCompatActivity {
             startLocationUpdates();
         }
     }
+
+    // Firebase methods
+    private void saveLocation(Location location) {
+        String locationId = databaseReference.push().getKey();
+        if (locationId != null) {
+            CustomLocation customLocation = new CustomLocation(
+                    location.getLatitude(),
+                    location.getLongitude(),
+                    (float) location.getAltitude(),
+                    location.getAccuracy(),
+                    location.getSpeed()
+            );
+
+            databaseReference.child(locationId).setValue(customLocation)
+                    .addOnSuccessListener(aVoid -> Toast.makeText(MainActivity.this, "Location saved", Toast.LENGTH_SHORT).show())
+                    .addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Failed to save location", Toast.LENGTH_SHORT).show());
+        }
+    }
+
+
+    private void retrieveLocations() {
+        databaseReference.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (DataSnapshot snapshot : task.getResult().getChildren()) {
+                    CustomLocation customLocation = snapshot.getValue(CustomLocation.class);
+                    if (customLocation != null) {
+                        // Handle the retrieved customLocation, e.g., add it to a list or update UI
+                        // Example: savedLocations.add(customLocation);
+                    }
+                }
+            } else {
+                Toast.makeText(MainActivity.this, "Failed to retrieve locations", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 }

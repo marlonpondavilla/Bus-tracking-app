@@ -38,7 +38,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
 
         // Get the singleton instance of MyApplication
         MyApplication myApplication = MyApplication.getInstance();
@@ -49,8 +51,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         BitmapDescriptor customIcon = BitmapDescriptorFactory.fromResource(R.drawable.img);
-//        BitmapDescriptor defaultIcon = BitmapDescriptorFactory.defaultMarker();
-
 
         LatLng bulakan = new LatLng(-34, 151);
         LatLng lastLocationPlaced = bulakan;
@@ -59,27 +59,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             for (Location location : savedLocations) {
                 LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
-                mMap.addMarker(new MarkerOptions().position(myLocation).title("Bussing 😝").icon(customIcon));
+                Marker marker = mMap.addMarker(new MarkerOptions().position(myLocation).title("Bussing 😝").icon(customIcon));
+                if (marker != null) {
+                    marker.setTag(0);
+                }
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
                 lastLocationPlaced = myLocation;
             }
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(lastLocationPlaced, 15));
-            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(@NonNull Marker marker) {
-                    //count the number of clicks
-                    Integer clicks = (Integer) marker.getTag();
-                    if(clicks == null){
-                        clicks = 0;
-                    }
-                    else {
-                        clicks++;
-                        marker.setTag(clicks);
-                        Toast.makeText(MapsActivity.this, "Bussing was clicked " + marker.getTag(), Toast.LENGTH_SHORT).show();
-                    }
-
-                    return false;
+            mMap.setOnMarkerClickListener(marker -> {
+                Integer clicks = (Integer) marker.getTag();
+                if (clicks != null) {
+                    clicks++;
+                    marker.setTag(clicks);
+                    Toast.makeText(MapsActivity.this, "Bussing was clicked " + clicks + " times", Toast.LENGTH_SHORT).show();
                 }
+                return false;
             });
         } else {
             // default cam

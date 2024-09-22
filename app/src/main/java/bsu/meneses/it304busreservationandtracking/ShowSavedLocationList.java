@@ -1,3 +1,4 @@
+
 package bsu.meneses.it304busreservationandtracking;
 
 import android.location.Location;
@@ -7,9 +8,6 @@ import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import java.util.List;
 
@@ -25,9 +23,14 @@ public class ShowSavedLocationList extends AppCompatActivity {
 
         lv_savedLocations = findViewById(R.id.lv_waypoints);
 
-        MyApplication myApplication = (MyApplication)getApplicationContext();
+        MyApplication myApplication = (MyApplication) getApplicationContext();
         List<Location> savedLocations = myApplication.getMyLocations();
 
-        lv_savedLocations.setAdapter((new ArrayAdapter<Location>(this, android.R.layout.simple_list_item_1, savedLocations)));
+        if (savedLocations != null) {
+            lv_savedLocations.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, savedLocations));
+        } else {
+            // Handle the case where there are no saved locations
+            lv_savedLocations.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new String[]{"No saved locations"}));
+        }
     }
 }

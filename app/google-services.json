@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "820001942128",
+    "project_id": "bus-reservation-ticketing",
+    "storage_bucket": "bus-reservation-ticketing.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820001942128:android:d1d180f2a35ecb938862b5",
+        "android_client_info": {
+          "package_name": "bsu.meneses.it304busreservationandtracking"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDs9mzkfF71mVUOMHwR9Wva6UqK00RW8co"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
