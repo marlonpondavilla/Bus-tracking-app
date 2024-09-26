@@ -22,24 +22,6 @@
         android:layout_height="wrap_content"
         android:text="Updates" />
 
-    <Switch
-        android:id="@+id/sw_gps"
-        android:layout_width="247dp"
-        android:layout_height="wrap_content"
-        android:text="Sensor" />
-
-    <TextView
-        android:id="@+id/tv_labelCrumbs"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="WayPoint" />
-
-    <TextView
-        android:id="@+id/tv_countOfCrumbs"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="0" />
-
     <Button
         android:id="@+id/btn_showMap"
         android:layout_width="376dp"

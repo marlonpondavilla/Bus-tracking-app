@@ -29,6 +29,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -43,15 +44,12 @@ public class MainActivity extends AppCompatActivity {
     // Firebase
     private DatabaseReference databaseReference;
 
-    TextView address, wayPointCounts;
-    Switch swUpdates, swGPS;
+    TextView address;
+    Switch swUpdates;
     Button showMapBtn;
 
     // Current location
     Location currentLocation;
-
-    // List of saved locations
-    List<Location> savedLocations;
 
     // Google API client
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -70,11 +68,11 @@ public class MainActivity extends AppCompatActivity {
         // Firebase
         databaseReference = FirebaseDatabase.getInstance().getReference("locations");
 
-        wayPointCounts = findViewById(R.id.tv_countOfCrumbs);
         address = findViewById(R.id.address);
 
         swUpdates = findViewById(R.id.sw_updates);
-        swGPS = findViewById(R.id.sw_gps);
+
+        swUpdates.setChecked(true);
 
         showMapBtn = findViewById(R.id.btn_showMap);
 
@@ -96,39 +94,31 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        //make this button aware user just toggle once do not let on always, consumes battery
-        swGPS.setOnClickListener(view -> {
-            if (swGPS.isChecked()) {
-                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                swGPS.setText("Using GPS sensors");
-            } else {
-                locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-                swGPS.setText("off");
-            }
-        });
-
         swUpdates.setOnClickListener(view -> {
             if (swUpdates.isChecked()) {
                 // Start tracking
                 startLocationUpdates();
+                // GPS priority
+                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             } else {
                 // Stop tracking
                 stopLocationUpdates();
+                // Balanced power accuracy GPS priority
+                locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
             }
         });
 
         showMapBtn.setOnClickListener(view -> {
             // Save the current location as a waypoint
-            if (currentLocation != null) {
-                MyApplication myApplication = MyApplication.getInstance();
-                savedLocations = myApplication.getMyLocations();
-                savedLocations.add(currentLocation);
-                wayPointCounts.setText(Integer.toString(savedLocations.size()));
-            } else {
+            if (currentLocation == null) {
                 Toast.makeText(MainActivity.this, "Current location is not available.", Toast.LENGTH_SHORT).show();
+                return; // Early return if currentLocation is null
             }
 
+            // Pass the current location to MapsActivity
             Intent i = new Intent(MainActivity.this, MapsActivity.class);
+            i.putExtra("latitude", currentLocation.getLatitude());
+            i.putExtra("longitude", currentLocation.getLongitude());
             startActivity(i);
         });
 
@@ -183,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                     .addOnSuccessListener(this, location -> {
                         if (location != null) {
                             updateUIValues(location);
-                            currentLocation = location;
+                            currentLocation = location; // Store the last known location
                         } else {
                             Toast.makeText(MainActivity.this, "Unable to get location, please turn on your location", Toast.LENGTH_SHORT).show();
                             Toast.makeText(MainActivity.this, "This app might not work properly.", Toast.LENGTH_SHORT).show();
@@ -268,7 +258,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     private void updateUIValues(Location location) {
         Geocoder geocoder = new Geocoder(MainActivity.this);
 
@@ -281,63 +270,29 @@ public class MainActivity extends AppCompatActivity {
                 address.setText("Address not available");
             }
         } catch (Exception e) {
-            address.setText("Unable to get street address");
-            Toast.makeText(this, "Cannot provide the street address", Toast.LENGTH_SHORT).show();
-        }
-
-        // Get instance to save the actual data
-        MyApplication myApplication = MyApplication.getInstance();
-        savedLocations = myApplication.getMyLocations();
-        wayPointCounts.setText(Integer.toString(savedLocations.size()));
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        stopLocationUpdates();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (swUpdates.isChecked()) {
-            startLocationUpdates();
+            e.printStackTrace();
+            address.setText("Unable to get address");
         }
     }
 
-    // Firebase methods
     private void saveLocation(Location location) {
         String locationId = databaseReference.push().getKey();
         if (locationId != null) {
-            CustomLocation customLocation = new CustomLocation(
-                    location.getLatitude(),
-                    location.getLongitude(),
-                    (float) location.getAltitude(),
-                    location.getAccuracy(),
-                    location.getSpeed()
-            );
-
-            databaseReference.child(locationId).setValue(customLocation)
-                    .addOnSuccessListener(aVoid -> Toast.makeText(MainActivity.this, "Location saved", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Failed to save location", Toast.LENGTH_SHORT).show());
+            databaseReference.child(locationId).setValue(location);
         }
     }
 
-
     private void retrieveLocations() {
-        databaseReference.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (DataSnapshot snapshot : task.getResult().getChildren()) {
-                    CustomLocation customLocation = snapshot.getValue(CustomLocation.class);
-                    if (customLocation != null) {
-                        // Handle the retrieved customLocation, e.g., add it to a list or update UI
-                        // Example: savedLocations.add(customLocation);
-                    }
-                }
-            } else {
-                Toast.makeText(MainActivity.this, "Failed to retrieve locations", Toast.LENGTH_SHORT).show();
+        databaseReference.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int locationCount = (int) snapshot.getChildrenCount();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle possible errors.
             }
         });
     }
-
 }

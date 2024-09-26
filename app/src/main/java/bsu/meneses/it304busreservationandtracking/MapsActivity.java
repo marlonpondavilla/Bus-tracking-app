@@ -1,84 +1,42 @@
 package bsu.meneses.it304busreservationandtracking;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-
-import android.location.Location;
 import android.os.Bundle;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.List;
-
-import bsu.meneses.it304busreservationandtracking.databinding.ActivityMapsBinding;
-
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-
-    private GoogleMap mMap;
-    private ActivityMapsBinding binding;
-
-    List<Location> savedLocations;
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+    private GoogleMap googleMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
 
-        binding = ActivityMapsBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(this);
-        }
-
-        // Get the singleton instance of MyApplication
-        MyApplication myApplication = MyApplication.getInstance();
-        savedLocations = myApplication.getMyLocations();
+        assert mapFragment != null;
+        mapFragment.getMapAsync(this);
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        BitmapDescriptor customIcon = BitmapDescriptorFactory.fromResource(R.drawable.img);
+    public void onMapReady(@NonNull GoogleMap map) {
+        googleMap = map;
 
-        LatLng bulakan = new LatLng(-34, 151);
-        LatLng lastLocationPlaced = bulakan;
+        // Get latitude and longitude from intent
+        double latitude = getIntent().getDoubleExtra("latitude", 0);
+        double longitude = getIntent().getDoubleExtra("longitude", 0);
 
-        if (savedLocations != null && !savedLocations.isEmpty()) {
-            for (Location location : savedLocations) {
-                LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
-
-                Marker marker = mMap.addMarker(new MarkerOptions().position(myLocation).title("Bussing 😝").icon(customIcon));
-                if (marker != null) {
-                    marker.setTag(0);
-                }
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
-                lastLocationPlaced = myLocation;
-            }
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(lastLocationPlaced, 15));
-            mMap.setOnMarkerClickListener(marker -> {
-                Integer clicks = (Integer) marker.getTag();
-                if (clicks != null) {
-                    clicks++;
-                    marker.setTag(clicks);
-                    Toast.makeText(MapsActivity.this, "Bussing was clicked " + clicks + " times", Toast.LENGTH_SHORT).show();
-                }
-                return false;
-            });
-        } else {
-            // default cam
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(0, 0))); // Move camera to a default position
-        }
+        // Add a marker at the current location
+        LatLng currentLocation = new LatLng(latitude, longitude);
+        googleMap.addMarker(new MarkerOptions().position(currentLocation).title("Current Location"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15)); // Adjust zoom level as needed
     }
 }
