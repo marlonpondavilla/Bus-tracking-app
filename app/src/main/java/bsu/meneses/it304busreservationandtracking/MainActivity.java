@@ -72,8 +72,6 @@ public class MainActivity extends AppCompatActivity {
 
         swUpdates = findViewById(R.id.sw_updates);
 
-        swUpdates.setChecked(true);
-
         showMapBtn = findViewById(R.id.btn_showMap);
 
         // Configure LocationRequest
@@ -278,9 +276,15 @@ public class MainActivity extends AppCompatActivity {
     private void saveLocation(Location location) {
         String locationId = databaseReference.push().getKey();
         if (locationId != null) {
-            databaseReference.child(locationId).setValue(location);
+            CustomLocation customLocation = new CustomLocation(
+                    location.getLatitude(),
+                    location.getLongitude(),
+                    location.getAccuracy()
+            );
+            databaseReference.child(locationId).setValue(customLocation);
         }
     }
+
 
     private void retrieveLocations() {
         databaseReference.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
