@@ -52,6 +52,12 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation ("com.firebaseui:firebase-ui-auth:8.0.2")
+
+    // Required only if Facebook login support is required
+    // Find the latest Facebook SDK releases here: https://github.com/facebook/facebook-android-sdk/blob/master/CHANGELOG.md
+    implementation ("com.facebook.android:facebook-login:8.1.0")
 }
 
 apply(plugin = "com.google.gms.google-services")

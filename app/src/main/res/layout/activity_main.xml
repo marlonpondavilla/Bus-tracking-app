@@ -29,6 +29,13 @@
         android:backgroundTint="@color/black"
         android:gravity="center"
         android:text="Show Map" />
-<!--    remove this comment-->
+
+    <Button
+        android:id="@+id/btn_firebaseauth"
+        android:layout_width="376dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/black"
+        android:gravity="center"
+        android:text="Firebase UI" />
 
 </LinearLayout>

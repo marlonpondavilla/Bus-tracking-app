@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView address;
     Switch swUpdates;
-    Button showMapBtn;
+    Button showMapBtn, firebaseUIBtn;
 
     // Current location
     Location currentLocation;
@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         swUpdates = findViewById(R.id.sw_updates);
 
         showMapBtn = findViewById(R.id.btn_showMap);
+        firebaseUIBtn = findViewById(R.id.btn_firebaseauth);
 
         // Configure LocationRequest
         locationRequest = new LocationRequest();
@@ -118,6 +119,12 @@ public class MainActivity extends AppCompatActivity {
             i.putExtra("latitude", currentLocation.getLatitude());
             i.putExtra("longitude", currentLocation.getLongitude());
             startActivity(i);
+        });
+
+        firebaseUIBtn.setOnClickListener(view -> {
+            Intent firebaseUIIntent = new Intent(MainActivity.this, FirebaseUI.class);
+
+            startActivity(firebaseUIIntent);
         });
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
