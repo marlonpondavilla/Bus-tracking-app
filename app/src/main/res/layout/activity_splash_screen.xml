@@ -6,6 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="770dp"
     android:background = "@drawable/splashact"
-    tools:context=".SplashScreen">
+    tools:context=".userinterfaces.SplashScreen">
 
 </RelativeLayout>

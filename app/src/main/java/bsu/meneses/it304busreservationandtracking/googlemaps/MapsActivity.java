@@ -1,4 +1,4 @@
-package bsu.meneses.it304busreservationandtracking;
+package bsu.meneses.it304busreservationandtracking.googlemaps;
 
 import android.os.Bundle;
 
@@ -11,6 +11,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import bsu.meneses.it304busreservationandtracking.R;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap googleMap;

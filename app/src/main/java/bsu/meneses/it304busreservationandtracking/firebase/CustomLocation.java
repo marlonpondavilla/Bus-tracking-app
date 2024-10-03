@@ -1,4 +1,4 @@
-package bsu.meneses.it304busreservationandtracking;
+package bsu.meneses.it304busreservationandtracking.firebase;
 
 public class CustomLocation {
     private double latitude;

@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
     <uses-feature
         android:name="android.hardware.location.gps"
@@ -16,7 +17,7 @@
         android:required="false" />
 
     <application
-        android:name=".MyApplication"
+        android:name=".googlemaps.MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -27,29 +28,38 @@
         android:theme="@style/Theme.IT304BUSRESERVATIONANDTRACKING"
         tools:targetApi="31">
         <activity
-            android:name=".WelcomePage"
+            android:name=".userinterfaces.UserPage"
             android:exported="false" />
         <activity
-            android:name=".SplashScreen"
+            android:name=".userinterfaces.WelcomePage"
             android:exported="true">
+
+<!--            temporarily set to launcher for testing purposes -marlonDev-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
         <activity
-            android:name=".FirebaseUI"
+            android:name=".userinterfaces.SplashScreen"
             android:exported="false">
 
         </activity>
+
+        <activity
+            android:name=".firebase.FirebaseUI"
+            android:exported="false"/>
+
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/api_key" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".googlemaps.MapsActivity"
             android:exported="false"
             android:label="@string/title_activity_maps" />
         <activity

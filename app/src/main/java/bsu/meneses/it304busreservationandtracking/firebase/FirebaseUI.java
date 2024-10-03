@@ -1,8 +1,8 @@
-package bsu.meneses.it304busreservationandtracking;
+package bsu.meneses.it304busreservationandtracking.firebase;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -16,23 +16,23 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 
+import bsu.meneses.it304busreservationandtracking.R;
+import bsu.meneses.it304busreservationandtracking.userinterfaces.UserPage;
+
 public class FirebaseUI extends AppCompatActivity {
 
     // Firebase sign-in launcher
     private ActivityResultLauncher<Intent> signInLauncher;
-    private Button locationPage;
+    TextView userName, userEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_firebase_ui);
+        setContentView(R.layout.activity_user_page);
 
-        locationPage = findViewById(R.id.btn_location_page);
-
-        locationPage.setOnClickListener(v -> {
-            Intent intent = new Intent(FirebaseUI.this, MainActivity.class);
-            startActivity(intent);
-        });
+        // Initialize the TextViews
+        userName = findViewById(R.id.user_name);
+        userEmail = findViewById(R.id.user_email);  // This was previously incorrect
 
         // Initialize the sign-in launcher
         signInLauncher = registerForActivityResult(
@@ -43,20 +43,24 @@ public class FirebaseUI extends AppCompatActivity {
                         // Sign-in successful
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                        //redirect to main page if sign in successful check setContentView(R.layout.activity_firebase_ui);
-
                         if (user != null) {
-                            // Display the user's email after successful login
-                            String email = user.getEmail();
-                            Toast.makeText(FirebaseUI.this, "Welcome, " + email, Toast.LENGTH_SHORT).show();
+                            // Pass the user data (name and email) to UserPage
+                            Intent intent = new Intent(FirebaseUI.this, UserPage.class);
+                            intent.putExtra("uid", user.getUid());
+                            intent.putExtra("name", user.getDisplayName());
+                            intent.putExtra("email", user.getEmail());
+                            intent.putExtra("phone", user.getPhoneNumber());
+                            intent.putExtra("photo", user.getPhotoUrl().toString());
+                            startActivity(intent);
+
+                            // Optionally show a welcome message
+                            Toast.makeText(FirebaseUI.this, "Welcome, " + user.getEmail(), Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         // Sign-in failed or canceled, handle the error
                         if (response != null && response.getError() != null) {
-                            // Log or show the error
                             Toast.makeText(FirebaseUI.this, "Error: " + response.getError().getMessage(), Toast.LENGTH_SHORT).show();
                         } else {
-                            // Canceled case
                             Toast.makeText(FirebaseUI.this, "Sign-in canceled", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -82,5 +86,14 @@ public class FirebaseUI extends AppCompatActivity {
 
         // Launch the sign-in activity
         signInLauncher.launch(signInIntent);
+    }
+
+    // Method to sign out the current user
+    private void signOut() {
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener(task -> {
+                    Toast.makeText(FirebaseUI.this, "Sign-out successful", Toast.LENGTH_SHORT).show();
+                });
     }
 }

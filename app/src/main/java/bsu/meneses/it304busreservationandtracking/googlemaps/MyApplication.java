@@ -1,4 +1,4 @@
-package bsu.meneses.it304busreservationandtracking;
+package bsu.meneses.it304busreservationandtracking.googlemaps;
 
 import android.app.Application;
 import android.location.Location;
