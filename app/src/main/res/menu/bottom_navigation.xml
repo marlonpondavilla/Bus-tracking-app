@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home"
+        android:title="Home"
+        android:icon="@drawable/home_solid"
+        />
+    <item
+        android:id="@+id/ticket"
+        android:title="Ticket"
+        android:icon="@drawable/ticket_solid"
+        />
+    <item
+        android:title=" "
+        android:id="@+id/blank"
+        />
+    <item
+        android:id="@+id/history"
+        android:title="History"
+        android:icon="@drawable/clock_stroke_rounded"
+        />
+    <item
+        android:id="@+id/account"
+        android:title="You"
+        android:icon="@drawable/user_solid"
+        />
+</menu>

@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.Arrays;
 
 import bsu.meneses.it304busreservationandtracking.R;
-import bsu.meneses.it304busreservationandtracking.userinterfaces.UserPage;
+import userinterfaces.UserPage;
 
 public class FirebaseUI extends AppCompatActivity {
 
@@ -31,8 +31,8 @@ public class FirebaseUI extends AppCompatActivity {
         setContentView(R.layout.activity_user_page);
 
         // Initialize the TextViews
-        userName = findViewById(R.id.user_name);
-        userEmail = findViewById(R.id.user_email);  // This was previously incorrect
+//        userName = findViewById(R.id.user_name);
+//        userEmail = findViewById(R.id.user_email);  // This was previously incorrect
 
         // Initialize the sign-in launcher
         signInLauncher = registerForActivityResult(
