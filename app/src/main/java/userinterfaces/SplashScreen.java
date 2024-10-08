@@ -1,4 +1,4 @@
-package bsu.meneses.it304busreservationandtracking.userinterfaces;
+package userinterfaces;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,6 +34,6 @@ public class SplashScreen extends AppCompatActivity {
             Intent intent = new Intent(SplashScreen.this, WelcomePage.class);
             startActivity(intent);
             finish();
-        }, 4000);
+        }, 3000);
     }
 }

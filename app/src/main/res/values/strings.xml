@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">IT 304 BUS RESERVATION AND TRACKING</string>
     <string name="title_activity_maps">MapsActivity</string>
+
+    <!-- FontAwesome icon strings -->
+    <string name="font_awesome_android_ic">&#xf17b;</string>
+    <string name="font_awesome_area_chart_ic">&#xf1fe;</string>
+    <string name="font_awesome_cubes_ic">&#xf1b3;</string>
+    <string name="font_awesome_mobile_phone_ic">&#xf10b;</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

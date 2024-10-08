@@ -1,68 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_firebase_ui"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".userinterfaces.UserPage">
+    android:background="#e8e8e8"
+    tools:context="userinterfaces.UserPage">
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:gravity="center"
-        android:orientation="vertical"
-        tools:context=".firebase.FirebaseUI"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp">
+        android:layout_height="match_parent" />
 
-        <ImageView
-            android:id="@+id/user_image"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginBottom="20dp"
-            android:gravity="center"
-            android:text="null"
-            android:textStyle="bold" />
+    <!-- BottomAppBar with BottomNavigationView -->
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/navbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
 
-        <TextView
-            android:id="@+id/user_name"
+        android:layout_gravity="bottom"
+        android:backgroundTint="#fff"
+        app:itemRippleColor="@color/white"
+        app:itemIconTint="@color/icons_button">
+
+        <!-- BottomNavigationView for menu items -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/nav_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="null"
-            android:textSize="20dp"
-            android:textStyle="bold" />
+            android:layout_gravity="bottom"
+            app:itemTextColor="#077bff"
+            app:menu="@menu/bottom_navigation"
+            app:itemIconTint="@color/icons_button"
+            android:background="#fff"/>
 
-        <TextView
-            android:id="@+id/user_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="null"
-            android:textSize="20dp"
-            android:textStyle="bold" />
+    </com.google.android.material.bottomappbar.BottomAppBar>
 
-        <TextView
-            android:id="@+id/user_phone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="null"
-            android:textSize="20dp"
-            android:textStyle="bold" />
+    <!-- FloatingActionButton outside of BottomNavigationView -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/locationFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#007bff"
+        android:elevation="0dp"
+        android:src="@drawable/location_pin"
+        app:maxImageSize="40dp" />
 
-        <TextView
-            android:id="@+id/user_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="null"
-            android:textSize="20dp"
-            android:textStyle="bold" />
-
-
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
